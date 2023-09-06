@@ -1,0 +1,24 @@
+steps:
+  # Step 1: Build the Angular application
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install', '-g', '@angular/cli@16.1.7']
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['run', 'build', '--', '--prod']
+
+  # Step 2: Store the build artifacts in Cloud Storage
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', '-r', 'dist/*', 'gs://your-cloud-storage-bucket-name']
+
+  # Step 3: Unzip the tar file in Cloud Storage
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', 'gs://your-cloud-storage-bucket-name/excellence_driving_admin_dev_artifact.tar.gz', '.']
+  - name: 'gcr.io/cloud-builders/tar'
+    args: ['-xzvf', 'excellence_driving_admin_dev_artifact.tar.gz']
+
+  # Step 4: Remove the tar file
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['rm', 'gs://your-cloud-storage-bucket-name/excellence_driving_admin_dev_artifact.tar.gz']
+
+# Optionally, you can add more steps for deploying or other tasks here
